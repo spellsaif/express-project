@@ -15,7 +15,7 @@
   "lint-staged": {
     "src/**/*.ts": [
       "yarn prettier:fix",
-      "npx lint"
+      "yarn lint"
     ]
   },
   "dependencies": {
