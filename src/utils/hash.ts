@@ -4,6 +4,6 @@ export const hash = async (password: string) => {
   return argon2.hash(password);
 };
 
-export const verify = async (password: string, hashedPassword: string) => {
+export const verify = (hashedPassword: string, password: string) => {
   return argon2.verify(hashedPassword, password);
 };

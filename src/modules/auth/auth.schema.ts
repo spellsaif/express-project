@@ -25,4 +25,23 @@ export const registerUserSchema = z.object({
   })
 });
 
+export const loginUserSchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: 'email is required',
+        invalid_type_error: 'email should be string'
+      })
+      .email('Invalid Email or Password!'),
+
+    password: z
+      .string({
+        required_error: 'password is required',
+        invalid_type_error: 'password should be string'
+      })
+      .min(6, 'Invalid Email or Password!')
+  })
+});
+
 export type RegisterUserInput = z.infer<typeof registerUserSchema>['body'];
+export type LoginUserInput = z.infer<typeof loginUserSchema>['body'];

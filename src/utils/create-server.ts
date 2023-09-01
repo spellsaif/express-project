@@ -1,6 +1,11 @@
 import express from 'express';
 import userRoute from '@modules/user/user.route';
 import authRoute from '@modules/auth/auth.route';
+import Redis from 'ioredis';
+
+export const redis = new Redis(
+  'redis://default:SmPHIjx8EUyPsCB9F6K6LWY02LYrKaVT@redis-13108.c301.ap-south-1-1.ec2.cloud.redislabs.com:13108'
+);
 
 function createServer() {
   const app = express();
