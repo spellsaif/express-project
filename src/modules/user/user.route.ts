@@ -2,6 +2,7 @@ import validate from '@middlewares/schema-validate';
 import { Router } from 'express';
 import {
   forgotPasswordHandler,
+  getCurrentUserHandler,
   passwordResetHandler,
   verifyUserHandler
 } from './user.controller';
@@ -34,5 +35,7 @@ userRoute.post(
   validate(passwordResetSchema),
   passwordResetHandler
 );
+
+userRoute.get('/me', getCurrentUserHandler);
 
 export default userRoute;

@@ -52,8 +52,6 @@ export const loginUserHandler = async (
     return res.status(400).send('User is not verified!');
   }
 
-  console.log('hash: ', user.password, 'plain: ', password);
-
   const verifyPassword = verify(user.password, password);
 
   if (!verifyPassword) {

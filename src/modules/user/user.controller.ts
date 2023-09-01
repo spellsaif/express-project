@@ -126,3 +126,8 @@ export const passwordResetHandler = async (
 
   return res.status(200).send('Password has been reset successfully!');
 };
+
+export const getCurrentUserHandler = async (req: Request, res: Response) => {
+  console.log(res.locals.user);
+  return res.send(res.locals.user);
+};

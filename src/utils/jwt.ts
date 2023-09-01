@@ -1,13 +1,25 @@
 import jwt from 'jsonwebtoken';
+import { omit } from 'lodash';
 
 export const signJwt = (
-  payload: Object,
+  data: Object,
   keyName: 'ACCESS_TOKEN_PRIVATE_KEY' | 'REFRESH_TOKEN_PRIVATE_KEY',
   options?: jwt.SignOptions | undefined
 ) => {
   const signingKey = Buffer.from(process.env[keyName]!, 'base64').toString(
     'ascii'
   );
+
+  const privateFields = [
+    'password',
+    'verificationCode',
+    'verified',
+    'passwordResetCode',
+    'createdAt',
+    'updatedAt'
+  ];
+
+  const payload = omit(data, privateFields);
 
   return jwt.sign(payload, signingKey, {
     ...(options && options),

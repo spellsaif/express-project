@@ -5,14 +5,18 @@ import { signJwt } from '@utils/jwt';
 export const signAccessToken = (user: User) => {
   const payload = user;
 
-  const accessToken = signJwt(payload, 'ACCESS_TOKEN_PRIVATE_KEY');
+  const accessToken = signJwt(payload, 'ACCESS_TOKEN_PRIVATE_KEY', {
+    expiresIn: '15m'
+  });
 
   return accessToken;
 };
 
 export const signRefreshToken = async (userId: string) => {
   await createSession(userId);
-  const refreshToken = signJwt(userId, 'REFRESH_TOKEN_PRIVATE_KEY');
+  const refreshToken = signJwt(userId, 'REFRESH_TOKEN_PRIVATE_KEY', {
+    expiresIn: '1y'
+  });
 
   return refreshToken;
 };
