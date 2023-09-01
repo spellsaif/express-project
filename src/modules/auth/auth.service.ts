@@ -1,9 +1,19 @@
 import { User } from '@prisma/client';
 import { redis } from '@utils/create-server';
 import { signJwt } from '@utils/jwt';
+import { omit } from 'lodash';
 
 export const signAccessToken = (user: User) => {
-  const payload = user;
+  const privateFields = [
+    'password',
+    'verificationCode',
+    'verified',
+    'passwordResetCode',
+    'createdAt',
+    'updatedAt'
+  ];
+
+  const payload = omit(user, privateFields);
 
   const accessToken = signJwt(payload, 'ACCESS_TOKEN_PRIVATE_KEY', {
     expiresIn: '15m'
@@ -12,9 +22,9 @@ export const signAccessToken = (user: User) => {
   return accessToken;
 };
 
-export const signRefreshToken = async (userId: string) => {
+export const signRefreshToken = async ({ userId }: { userId: string }) => {
   await createSession(userId);
-  const refreshToken = signJwt(userId, 'REFRESH_TOKEN_PRIVATE_KEY', {
+  const refreshToken = signJwt({ userId }, 'REFRESH_TOKEN_PRIVATE_KEY', {
     expiresIn: '1y'
   });
 

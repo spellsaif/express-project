@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   loginUserHandler,
+  refreshAccessTokenHandler,
   registerUserHandler
 } from '@modules/auth/auth.controller';
 import validate from '@middlewares/schema-validate';
@@ -14,5 +15,6 @@ authRoute.get('/', (_, res) => {
 
 authRoute.post('/register', validate(registerUserSchema), registerUserHandler);
 authRoute.post('/login', validate(loginUserSchema), loginUserHandler);
+authRoute.post('/session/refresh', refreshAccessTokenHandler);
 
 export default authRoute;

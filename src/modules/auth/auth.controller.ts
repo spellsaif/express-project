@@ -6,6 +6,8 @@ import sendMail from '@utils/mailer';
 import prisma from '@utils/prisma';
 import { verify } from '@utils/hash';
 import { signAccessToken, signRefreshToken } from './auth.service';
+import { verifyJwt } from '@utils/jwt';
+import { redis } from '@utils/create-server';
 
 export const registerUserHandler = async (
   req: Request<{}, {}, RegisterUserInput>,
@@ -59,10 +61,49 @@ export const loginUserHandler = async (
   }
 
   const accessToken = signAccessToken(user);
-  const refreshToken = await signRefreshToken(user.id);
+  const refreshToken = await signRefreshToken({ userId: user.id });
 
   return res.json({
     accessToken,
     refreshToken
   });
+};
+
+export const refreshAccessTokenHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const refreshToken = req.headers['x-refresh'] as string;
+
+  console.log(refreshToken);
+  const decoded = await verifyJwt(refreshToken, 'REFRESH_TOKEN_PUBLIC_KEY');
+
+  console.log(decoded);
+
+  if (!decoded) {
+    return res.status(401).send("couldn't refresh access token");
+  }
+
+  const session = await redis.get(decoded.userId);
+  console.log(session);
+
+  if (!session || !JSON.parse(session).valid) {
+    return res.status(401).send("couldn't refresh access token");
+  }
+
+  const user = await prisma.user.findFirst({
+    where: {
+      id: decoded.userId
+    }
+  });
+
+  if (!user) {
+    return res.status(401).send("couldn't refresh access token");
+  }
+
+  console.log(user);
+
+  const accessToken = signAccessToken(user);
+
+  return res.status(200).send({ accessToken });
 };
