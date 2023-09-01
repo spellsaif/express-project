@@ -7,6 +7,7 @@ function createServer() {
 
   //Middleware
 
+  app.use(express.json());
   app.use('/api/auth', authRoute);
   app.use('/api/users', userRoute);
 
