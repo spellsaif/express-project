@@ -23,5 +23,26 @@ export const forgotPasswordSchema = z.object({
   })
 });
 
+export const passwordResetSchema = z.object({
+  params: z.object({
+    passwordResetCode: z.string({
+      required_error: 'password reset code is required!'
+    }),
+    id: z.string({
+      required_error: 'id is required!'
+    })
+  }),
+
+  body: z.object({
+    newPassword: z
+      .string({
+        required_error: 'new password is required!',
+        invalid_type_error: 'new password should be string!'
+      })
+      .min(6, 'Should be atleast 6 characters!')
+  })
+});
+
 export type VerifyUserParams = z.infer<typeof verifyUserSchema>['params'];
 export type ForgotPasswordInput = z.infer<typeof forgotPasswordSchema>['body'];
+export type PasswordResetInput = z.infer<typeof passwordResetSchema>;
