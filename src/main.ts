@@ -1,4 +1,5 @@
 import createServer from '@utils/create-server';
+import logger from '@utils/logger';
 
 import dotenv from 'dotenv';
 
@@ -10,7 +11,7 @@ async function main() {
   const app = createServer();
 
   app.listen(SERVER_PORT, () => {
-    console.log(`Listening at http://localhost:${SERVER_PORT} `);
+    logger.info(`Listening at http://localhost:${SERVER_PORT} `);
   });
 }
 
