@@ -1,8 +1,10 @@
+import sendMail from '@utils/mailer';
 import prisma from '@utils/prisma';
 import { Request, Response } from 'express';
-import { VerifyUserParams } from './user.schema';
+import { nanoid } from 'nanoid';
+import { ForgotPasswordInput, VerifyUserParams } from './user.schema';
 
-export const verifyUserHanlder = async (
+export const verifyUserHandler = async (
   req: Request<VerifyUserParams>,
   res: Response
 ) => {
@@ -40,4 +42,49 @@ export const verifyUserHanlder = async (
   });
 
   return res.status(200).send('User Succefully Verified!');
+};
+
+export const forgotPasswordHandler = async (
+  req: Request<{}, {}, ForgotPasswordInput>,
+  res: Response
+) => {
+  const { email } = req.body;
+
+  const user = await prisma.user.findFirst({
+    where: {
+      email
+    }
+  });
+
+  if (!user) {
+    return res
+      .status(200)
+      .send('Reset Password Link has been sent to your email! ');
+  }
+
+  if (!user.verified) {
+    return res.status(400).send('Verify User first! ');
+  }
+
+  const passwordResetCode = nanoid();
+
+  await prisma.user.update({
+    where: {
+      email
+    },
+    data: {
+      passwordResetCode
+    }
+  });
+
+  await sendMail({
+    from: 'test@test.com',
+    to: email,
+    subject: 'Reset Your Password',
+    text: `Password Reset Code: ${passwordResetCode} ID: ${user.id}`
+  });
+
+  return res
+    .status(200)
+    .send('Reset Password Link has been sent to your email! ');
 };

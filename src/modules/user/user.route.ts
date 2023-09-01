@@ -1,7 +1,7 @@
 import validate from '@middlewares/schema-validate';
 import { Router } from 'express';
-import { verifyUserHanlder } from './user.controller';
-import { verifyUserSchema } from './user.schema';
+import { forgotPasswordHandler, verifyUserHandler } from './user.controller';
+import { forgotPasswordSchema, verifyUserSchema } from './user.schema';
 
 const userRoute = Router();
 
@@ -10,9 +10,15 @@ userRoute.get('/', (_, res) => {
 });
 
 userRoute.get(
-  '/:verificationCode/:id',
+  '/verification/:verificationCode/:id',
   validate(verifyUserSchema),
-  verifyUserHanlder
+  verifyUserHandler
+);
+
+userRoute.post(
+  '/forgotpassword',
+  validate(forgotPasswordSchema),
+  forgotPasswordHandler
 );
 
 export default userRoute;
